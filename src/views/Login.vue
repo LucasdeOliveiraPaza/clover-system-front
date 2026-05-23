@@ -20,7 +20,7 @@ const realizarLogin = () => {
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h2>Acessar o Sistema</h2>
+      <h2>Clover System</h2>
 
       <div class="field">
         <label for="login">Login</label>
