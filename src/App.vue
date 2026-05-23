@@ -1,6 +1,13 @@
 <template>
-  <RouterView />
+  <div id="app">
+    <RouterView />
+    <DynamicDialog />
+  </div>
 </template>
+
+<script setup>
+import DynamicDialog from 'primevue/dynamicdialog'
+</script>
 
 <style>
 body {

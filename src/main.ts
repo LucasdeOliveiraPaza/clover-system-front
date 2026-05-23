@@ -6,6 +6,7 @@ import Aura from '@primevue/themes/aura'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
 import Tooltip from 'primevue/tooltip'
+import DialogService from 'primevue/dialogservice'
 
 const app = createApp(App)
 
@@ -17,4 +18,5 @@ app.use(PrimeVue, {
 
 app.use(router)
 app.directive('tooltip', Tooltip)
+app.use(DialogService)
 app.mount('#app')

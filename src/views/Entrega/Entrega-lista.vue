@@ -2,7 +2,7 @@
   <div class="cabecalho">Entregas</div>
   <div class="container">
     <div class="botoes-cabecalho">
-      <Button label="Novo Registro" raised icon="pi pi-plus" @click="dialogCadastro = true" />
+      <Button label="Novo Registro" raised icon="pi pi-plus" @click="abrirCadastroEntrega()" />
       <Button
         label="Ir para Outra Página"
         icon="pi pi-arrow-right"
@@ -77,30 +77,12 @@
               raised
               severity="warning"
               v-tooltip.top="'Editar'"
-              @click="editarEntrega(entrega.data)"
-            />
-            <Button
-              icon="pi pi-link"
-              outlined
-              rounded
-              raised
-              severity="info"
-              v-tooltip.top="'Relacionar Entregador'"
-              @click="relacionarEntregador(entrega.data)"
+              @click="abrirCadastroEntrega(entrega.data)"
             />
           </div>
         </template>
       </Column>
     </DataTable>
-
-    <Dialog
-      v-model:visible="dialogCadastro"
-      modal
-      header="Cadastro Entrega"
-      :style="{ width: '50vw' }"
-    >
-      <EntregaCadastro />
-    </Dialog>
   </div>
 </template>
 
@@ -110,16 +92,17 @@ import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
-import EntregaCadastro from './Entrega-cadastro.vue'
+import { useDialog } from 'primevue/usedialog'
+import { defineAsyncComponent } from 'vue'
 
 onMounted(() => {
   listar()
 })
 
+const EntregaCadastro = defineAsyncComponent(() => import('./Entrega-cadastro.vue'))
+const dialog = useDialog()
 const router = useRouter()
-const dialogCadastro = ref(false)
 const entregas = ref([])
 
 const navegarPara = () => {
@@ -159,12 +142,24 @@ const limparFiltros = () => {
   listar()
 }
 
-const editarEntrega = (item) => {
-  console.log('Editar item:', item)
-}
-
-const relacionarEntregador = (item) => {
-  console.log('Relacionar item:', item)
+const abrirCadastroEntrega = (entrega = []) => {
+  dialog.open(EntregaCadastro, {
+    props: {
+      header: 'Cadastro de Usuário',
+      style: {
+        width: '50vw',
+      },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      modal: true,
+    },
+    data: entrega,
+    onClose: (options) => {
+      console.log(options.data)
+    },
+  })
 }
 </script>
 
