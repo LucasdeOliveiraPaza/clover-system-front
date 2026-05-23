@@ -64,7 +64,7 @@
       <Column field="id_entrega" header="ID Entrega" />
       <Column field="id_venda" header="ID Venda" />
       <Column field="status" header="Status" />
-      <Column field="entregador" header="Entregador" />
+      <Column field="entregador.label" header="Entregador" />
       <Column field="destinatario" header="Destinatário" />
       <Column field="contato" header="Contato Destinatário" />
       <Column header="Ações">
@@ -115,7 +115,7 @@ const listar = () => {
       id_entrega: 1,
       id_venda: 1,
       status: 'Pendente',
-      entregador: 'fulano',
+      entregador: { label: 'fulano', value: 2 },
       destinatario: 'cliente1',
       contato: '(99)99999-9999',
     },
@@ -123,7 +123,7 @@ const listar = () => {
       id_entrega: 2,
       id_venda: 10,
       status: 'Pendente',
-      entregador: 'deltrano',
+      entregador: { label: 'deltrano', value: 3 },
       destinatario: 'cliente2',
       contato: '(99)98742-9999',
     },
@@ -131,7 +131,7 @@ const listar = () => {
       id_entrega: 3,
       id_venda: 12,
       status: 'Em Trânsito',
-      entregador: 'fulano',
+      entregador: { label: 'fulano', value: 2 },
       destinatario: 'cliente3',
       contato: '(99)99999-9010',
     },
@@ -156,8 +156,8 @@ const abrirCadastroEntrega = (entrega = []) => {
       modal: true,
     },
     data: entrega,
-    onClose: (options) => {
-      console.log(options.data)
+    onClose: () => {
+      listar()
     },
   })
 }
