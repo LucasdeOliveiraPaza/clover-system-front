@@ -129,8 +129,6 @@ import InputMask from 'primevue/inputmask'
 onMounted(() => {
   const dados = dialogRef.value.data
 
-  console.log(dados)
-
   if (dados.id_entrega) {
     form.value.id = dados.id_entrega
     form.value.idVenda = dados.id_venda

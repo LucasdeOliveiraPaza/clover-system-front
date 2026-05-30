@@ -1,22 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-
-const router = useRouter()
-const login = ref('')
-const senha = ref('')
-
-const realizarLogin = () => {
-  if (login.value && senha.value) {
-    router.push('/entrega-lista')
-  } else {
-    alert('Por favor, preencha os campos!')
-  }
-}
-</script>
-
 <template>
   <div class="login-container">
     <div class="login-card">
@@ -36,6 +17,48 @@ const realizarLogin = () => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import { usarUsuarioGlobal } from '@/globals/globals'
+
+const router = useRouter()
+const usuarioGlobal = usarUsuarioGlobal()
+const login = ref('')
+const senha = ref('')
+const usuarios = ref([
+  { login: 'gerente', senha: 123, codUsuario: 1, gerente: true },
+  { login: 'entregador', senha: 321, codUsuario: 2, gerente: false },
+])
+
+const realizarLogin = () => {
+  if (login.value && senha.value) {
+    validarSenha()
+  } else {
+    alert('Por favor, preencha os campos!')
+  }
+}
+
+const validarSenha = () => {
+  const usu = usuarios.value.find((u) => u.login == login.value)
+
+  if (!usu) {
+    alert('Usuário não encontrado')
+    return
+  }
+
+  if (usu.senha != senha.value) {
+    alert('Senha Inválida')
+    return
+  }
+
+  usuarioGlobal.setUsuario(usu.codUsuario, usu.gerente)
+  router.push('/entrega-lista')
+}
+</script>
 
 <style scoped>
 .login-container {

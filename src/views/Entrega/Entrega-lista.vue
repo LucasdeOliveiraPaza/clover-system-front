@@ -1,10 +1,10 @@
 <template>
   <div class="cabecalho">Entregas</div>
   <div class="container">
-    <div class="botoes-cabecalho">
+    <div class="botoes-cabecalho" v-if="usuarioGerente">
       <Button label="Novo Registro" raised icon="pi pi-plus" @click="abrirCadastroEntrega()" />
       <Button
-        label="Ir para Outra Página"
+        label="Cadastro de Usuários"
         icon="pi pi-arrow-right"
         severity="secondary"
         raised
@@ -25,12 +25,12 @@
             <InputText id="idVenda" class="w-full" />
           </div>
 
-          <div class="col-12 md:col-2 flex flex-column gap-2">
+          <div class="col-12 md:col-2 flex flex-column gap-2" v-if="usuarioGerente">
             <label name="status" class="font-medium text-sm">Status</label>
             <InputText id="status" class="w-full" />
           </div>
 
-          <div class="col-12 md:col-2 flex flex-column gap-2">
+          <div class="col-12 md:col-2 flex flex-column gap-2" v-if="usuarioGerente">
             <label name="entregador" class="font-medium text-sm">Entregador</label>
             <InputText id="entregador" class="w-full" />
           </div>
@@ -63,13 +63,13 @@
 
       <Column field="id_entrega" header="ID Entrega" />
       <Column field="id_venda" header="ID Venda" />
-      <Column field="status" header="Status" />
-      <Column field="entregador.label" header="Entregador" />
+      <Column v-if="usuarioGerente" field="status" header="Status" />
+      <Column v-if="usuarioGerente" field="entregador.label" header="Entregador" />
       <Column field="destinatario" header="Destinatário" />
-      <Column field="contato" header="Contato Destinatário" />
+      <Column v-if="usuarioGerente" field="contato" header="Contato Destinatário" />
       <Column header="Ações">
         <template #body="entrega">
-          <div class="botoes-tabela">
+          <div class="botoes-tabela" v-if="usuarioGerente">
             <Button
               icon="pi pi-pencil"
               outlined
@@ -78,6 +78,18 @@
               severity="warning"
               v-tooltip.top="'Editar'"
               @click="abrirCadastroEntrega(entrega.data)"
+            />
+          </div>
+
+          <div class="botoes-tabela" v-else>
+            <Button
+              icon="pi pi-arrow-right"
+              outlined
+              rounded
+              raised
+              severity="warning"
+              v-tooltip.top="'Iniciar Entrega'"
+              @click="iniciarEntrega()"
             />
           </div>
         </template>
@@ -95,15 +107,19 @@ import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import { useDialog } from 'primevue/usedialog'
 import { defineAsyncComponent } from 'vue'
-
-onMounted(() => {
-  listar()
-})
+import { usarUsuarioGlobal } from '@/globals/globals.ts'
 
 const EntregaCadastro = defineAsyncComponent(() => import('./Entrega-cadastro.vue'))
 const dialog = useDialog()
 const router = useRouter()
+const usuarioGlobal = usarUsuarioGlobal()
 const entregas = ref([])
+const usuarioGerente = ref(false)
+
+onMounted(() => {
+  listar()
+  usuarioGerente.value = usuarioGlobal.getUsuario().gerente
+})
 
 const navegarPara = () => {
   router.push('/usuario-lista')
@@ -160,6 +176,10 @@ const abrirCadastroEntrega = (entrega = []) => {
       listar()
     },
   })
+}
+
+const iniciarEntrega = () => {
+  router.push('/usuario-lista')
 }
 </script>
 
