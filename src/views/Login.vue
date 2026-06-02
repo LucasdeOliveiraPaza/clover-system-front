@@ -23,10 +23,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import { usarUsuarioGlobal } from '@/globals/globals'
+import { navegar, usarUsuarioGlobal } from '@/globals/globals'
 
 const router = useRouter()
 const usuarioGlobal = usarUsuarioGlobal()
+const nav = navegar()
 const login = ref('')
 const senha = ref('')
 const usuarios = ref([
@@ -56,7 +57,7 @@ const validarSenha = () => {
   }
 
   usuarioGlobal.setUsuario(usu.codUsuario, usu.gerente)
-  router.push('/entrega-lista')
+  nav.navegarPara('/entrega-lista')
 }
 </script>
 

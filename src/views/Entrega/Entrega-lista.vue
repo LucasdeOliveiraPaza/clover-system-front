@@ -8,7 +8,7 @@
         icon="pi pi-arrow-right"
         severity="secondary"
         raised
-        @click="navegarPara"
+        @click="nav.navegarPara('/usuario-lista')"
       />
     </div>
 
@@ -89,7 +89,7 @@
               raised
               severity="warning"
               v-tooltip.top="'Iniciar Entrega'"
-              @click="iniciarEntrega()"
+              @click="nav.navegarPara('/rota-entrega')"
             />
           </div>
         </template>
@@ -107,11 +107,12 @@ import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import { useDialog } from 'primevue/usedialog'
 import { defineAsyncComponent } from 'vue'
-import { usarUsuarioGlobal } from '@/globals/globals.ts'
+import { navegar, usarUsuarioGlobal } from '@/globals/globals.ts'
 
 const EntregaCadastro = defineAsyncComponent(() => import('./Entrega-cadastro.vue'))
 const dialog = useDialog()
 const router = useRouter()
+const nav = navegar()
 const usuarioGlobal = usarUsuarioGlobal()
 const entregas = ref([])
 const usuarioGerente = ref(false)
@@ -120,10 +121,6 @@ onMounted(() => {
   listar()
   usuarioGerente.value = usuarioGlobal.getUsuario().gerente
 })
-
-const navegarPara = () => {
-  router.push('/usuario-lista')
-}
 
 const listar = () => {
   entregas.value = [
@@ -176,10 +173,6 @@ const abrirCadastroEntrega = (entrega = []) => {
       listar()
     },
   })
-}
-
-const iniciarEntrega = () => {
-  router.push('/usuario-lista')
 }
 </script>
 

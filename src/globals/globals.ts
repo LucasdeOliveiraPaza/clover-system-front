@@ -1,3 +1,4 @@
+import router from '@/router'
 import { ref } from 'vue'
 
 const usuario = ref({
@@ -18,5 +19,15 @@ export function usarUsuarioGlobal() {
   return {
     getUsuario,
     setUsuario,
+  }
+}
+
+export function navegar() {
+  function navegarPara(rota: string) {
+    router.push(rota)
+  }
+
+  return {
+    navegarPara,
   }
 }
