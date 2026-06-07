@@ -187,6 +187,5 @@ const fecharModal = () => {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  grid-column: span 2;
 }
 </style>

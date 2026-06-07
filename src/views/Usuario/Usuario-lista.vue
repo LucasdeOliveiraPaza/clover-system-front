@@ -9,7 +9,7 @@
     <DataTable :value="usuarios" responsiveLayout="scroll">
       <template #header>
         <div class="grid align-items-end gap-3">
-          <div class="col-12 md:col-2 flex flex-column gap-2">
+          <div class="col-12 md:col-3 flex flex-column gap-2">
             <label for="idUsuario" class="font-medium text-sm">ID Usuário</label>
             <InputText id="idUsuario" class="w-full" />
           </div>
@@ -17,11 +17,6 @@
           <div class="col-12 md:col-3 flex flex-column gap-2">
             <label for="nome" class="font-medium text-sm">Nome</label>
             <InputText id="nome" class="w-full" />
-          </div>
-
-          <div class="col-12 md:col-3 flex flex-column gap-2">
-            <label for="email" class="font-medium text-sm">E-mail</label>
-            <InputText id="email" class="w-full" />
           </div>
 
           <div class="col-12 md:col-1 flex gap-2">
@@ -46,8 +41,7 @@
       </template>
 
       <Column field="id_usuario" header="ID Usuário" />
-      <Column field="nome" header="Nome" />
-      <Column field="email" header="E-mail" />
+      <Column field="nome" header="Nome Usuário" />
 
       <Column header="Ações">
         <template #body="usuario">
@@ -91,16 +85,19 @@ const listar = () => {
       id_usuario: 1,
       nome: 'Lucas',
       email: 'lucas@email.com',
+      tipo: 'G',
     },
     {
       id_usuario: 2,
       nome: 'João',
       email: 'joao@email.com',
+      tipo: 'E',
     },
     {
       id_usuario: 3,
       nome: 'Maria',
       email: 'maria@email.com',
+      tipo: 'E',
     },
   ]
 }
@@ -122,23 +119,8 @@ const abrirCadastroUsuario = (usuario = {}) => {
       modal: true,
     },
     data: usuario,
-    onClose: (options) => {
-      const usuarioSalvo = options.data
-
-      if (!usuarioSalvo) {
-        return
-      }
-
-      if (usuarioSalvo.id_usuario) {
-        const index = usuarios.value.findIndex((u) => u.id_usuario === usuarioSalvo.id_usuario)
-
-        if (index !== -1) {
-          usuarios.value[index] = usuarioSalvo
-        }
-      } else {
-        usuarioSalvo.id_usuario = usuarios.value.length + 1
-        usuarios.value.push(usuarioSalvo)
-      }
+    onClose: () => {
+      listar()
     },
   })
 }
