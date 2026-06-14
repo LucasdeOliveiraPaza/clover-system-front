@@ -4,7 +4,7 @@
     <div class="botoes-cabecalho" v-if="usuarioGerente">
       <Button label="Novo Registro" raised icon="pi pi-plus" @click="abrirCadastroEntrega()" />
       <Button
-        label="Cadastro de Usuários"
+        label="Tela de Usuários"
         icon="pi pi-arrow-right"
         severity="secondary"
         raised
@@ -111,7 +111,6 @@ import { navegar, usarUsuarioGlobal } from '@/globals/globals.ts'
 
 const EntregaCadastro = defineAsyncComponent(() => import('./Entrega-cadastro.vue'))
 const dialog = useDialog()
-const router = useRouter()
 const nav = navegar()
 const usuarioGlobal = usarUsuarioGlobal()
 const entregas = ref([])

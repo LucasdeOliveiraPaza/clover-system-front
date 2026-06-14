@@ -4,6 +4,13 @@
   <div class="container">
     <div class="botoes-cabecalho">
       <Button label="Novo Usuário" raised icon="pi pi-plus" @click="abrirCadastroUsuario()" />
+      <Button
+        label="Tela de Entregas"
+        icon="pi pi-arrow-right"
+        severity="secondary"
+        raised
+        @click="nav.navegarPara('/entrega-lista')"
+      />
     </div>
 
     <DataTable :value="usuarios" responsiveLayout="scroll">
@@ -69,11 +76,13 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import { useDialog } from 'primevue/usedialog'
+import { navegar } from '@/globals/globals.ts'
 
 const UsuarioCadastro = defineAsyncComponent(() => import('./Usuario-cadastro.vue'))
 
 const dialog = useDialog()
 const usuarios = ref([])
+const nav = navegar()
 
 onMounted(() => {
   listar()
