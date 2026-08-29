@@ -170,8 +170,7 @@ const salvarDados = () => {
 .dialog-conteudo {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding-top: 1rem;
+  gap: 1rem;
 }
 
 .canvas-container {
