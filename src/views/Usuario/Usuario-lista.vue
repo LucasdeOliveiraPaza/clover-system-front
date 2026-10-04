@@ -71,6 +71,7 @@
 
 <script setup>
 import { onMounted, ref, defineAsyncComponent } from 'vue'
+import api from '@/globals/api'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -88,27 +89,12 @@ onMounted(() => {
   listar()
 })
 
-const listar = () => {
-  usuarios.value = [
-    {
-      id_usuario: 1,
-      nome: 'Lucas',
-      email: 'lucas@email.com',
-      tipo: 'G',
-    },
-    {
-      id_usuario: 2,
-      nome: 'João',
-      email: 'joao@email.com',
-      tipo: 'E',
-    },
-    {
-      id_usuario: 3,
-      nome: 'Maria',
-      email: 'maria@email.com',
-      tipo: 'E',
-    },
-  ]
+const listar = async () => {
+  try {
+    usuarios.value = await api.get('/api/usuarios')
+  } catch (error) {
+    alert('Erro na requisição')
+  }
 }
 
 const limparFiltros = () => {

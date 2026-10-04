@@ -100,7 +100,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import api from '@/globals/api'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -121,33 +121,12 @@ onMounted(() => {
   usuarioGerente.value = usuarioGlobal.getUsuario().gerente
 })
 
-const listar = () => {
-  entregas.value = [
-    {
-      id_entrega: 1,
-      id_venda: 1,
-      status: 'Pendente',
-      entregador: { label: 'fulano', value: 2 },
-      destinatario: 'cliente1',
-      contato: '(99)99999-9999',
-    },
-    {
-      id_entrega: 2,
-      id_venda: 10,
-      status: 'Pendente',
-      entregador: { label: 'deltrano', value: 3 },
-      destinatario: 'cliente2',
-      contato: '(99)98742-9999',
-    },
-    {
-      id_entrega: 3,
-      id_venda: 12,
-      status: 'Em Trânsito',
-      entregador: { label: 'fulano', value: 2 },
-      destinatario: 'cliente3',
-      contato: '(99)99999-9010',
-    },
-  ]
+const listar = async () => {
+  try {
+    entregas.value = await api.get('/api/entregas')
+  } catch (error) {
+    alert('Erro na requisição')
+  }
 }
 
 const limparFiltros = () => {

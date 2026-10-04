@@ -20,6 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import api from '@/globals/api'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -43,21 +44,30 @@ const realizarLogin = () => {
   }
 }
 
-const validarSenha = () => {
-  const usu = usuarios.value.find((u) => u.login == login.value)
+const validarSenha = async () => {
+  try {
+    const body = {
+      login: login.value,
+      senha: senha.value
+    }
+    const usu = await api.post('/api/login', body)
 
-  if (!usu) {
-    alert('Usuário não encontrado')
-    return
+    if (usu.error == 'login') {
+      alert('Usuário não encontrado')
+      return
+    }
+
+    if (usu.error == 'senha') {
+      alert('Senha Inválida')
+      return
+    }
+
+    localStorage.setItem('token', usu.token);
+    usuarioGlobal.setUsuario(usu.codUsuario, usu.gerente)
+    nav.navegarPara('/entrega-lista')
+  } catch (error) {
+    alert('Erro na requisição')
   }
-
-  if (usu.senha != senha.value) {
-    alert('Senha Inválida')
-    return
-  }
-
-  usuarioGlobal.setUsuario(usu.codUsuario, usu.gerente)
-  nav.navegarPara('/entrega-lista')
 }
 </script>
 
