@@ -123,7 +123,7 @@ onMounted(() => {
 
 const listar = async () => {
   try {
-    entregas.value = await api.get('/api/entregas')
+    entregas.value = await api.get('/api/entrega')
   } catch (error) {
     alert('Erro na requisição')
   }

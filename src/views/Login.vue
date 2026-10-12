@@ -48,7 +48,7 @@ const validarSenha = async () => {
   try {
     const body = {
       login: login.value,
-      senha: senha.value
+      senha: senha.value,
     }
     const usu = await api.post('/api/login', body)
 
@@ -62,7 +62,7 @@ const validarSenha = async () => {
       return
     }
 
-    localStorage.setItem('token', usu.token);
+    localStorage.setItem('token', usu.token)
     usuarioGlobal.setUsuario(usu.codUsuario, usu.gerente)
     nav.navegarPara('/entrega-lista')
   } catch (error) {

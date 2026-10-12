@@ -91,7 +91,7 @@ onMounted(() => {
 
 const listar = async () => {
   try {
-    usuarios.value = await api.get('/api/usuarios')
+    usuarios.value = await api.get('/api/usuario')
   } catch (error) {
     alert('Erro na requisição')
   }

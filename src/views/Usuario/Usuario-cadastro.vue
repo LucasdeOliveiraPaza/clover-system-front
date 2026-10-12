@@ -1,6 +1,6 @@
 <template>
   <div class="cadastro-container">
-    <form @submit.prevent="salvarCadastro" class="formulario-container">
+    <form @submit.prevent="clicouSalvar" class="formulario-container">
       <Panel header="Informações do Usuário">
         <div class="grid">
           <div class="col-12 md:col-6 flex flex-column gap-2">
@@ -9,8 +9,8 @@
           </div>
 
           <div class="col-12 md:col-6 flex flex-column gap-2">
-            <label for="email" class="font-semibold text-sm">E-mail</label>
-            <InputText id="email" v-model="form.email" placeholder="Digite o e-mail" fluid />
+            <label for="login" class="font-semibold text-sm">Login</label>
+            <InputText id="login" v-model="form.login" fluid />
           </div>
 
           <div class="col-12">
@@ -34,8 +34,8 @@
       </Panel>
 
       <div class="botoes-rodape full-width">
-        <div class="botoes-acoes">
-          <Button label="Alterar Senha" icon="pi pi-key" outlined @click="gerarSenhaTemporaria()" />
+        <div class="botoes-acoes" >
+          <Button label="Alterar Senha" icon="pi pi-key" outlined v-if="editando" @click="abrirAlterarSenha()" />
         </div>
 
         <div class="botoes-acoes">
@@ -54,20 +54,27 @@
   </div>
 
   <Dialog
-    v-model:visible="dialogSenhaTemporaria"
+    v-model:visible="dialogSenha"
     modal
-    header="Senha Temporária"
+    header="Alterar Senha"
     :style="{ width: '25rem' }"
   >
-    <label
-      >Senha temporária do usuário:
-      <span style="font-weight: bold">{{ senhaTemporaria }}</span></label
-    >
+    <div class="flex flex-column">
+      <label for="senha" class="font-semibold text-sm">Senha</label>
+      <InputText id="senha" v-model="senha" fluid type="password" />
+    </div>
+
+    <div class="full-width">
+      <div class="botoes-acoes" >
+        <Button label="Alterar" icon="pi pi-check" :disabled="senha == ''" @click="alterarSenha()" />
+      </div>
+    </div>
   </Dialog>
 </template>
 
 <script setup>
 import { onMounted, ref, inject } from 'vue'
+import api from '@/globals/api'
 import Panel from 'primevue/panel'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
@@ -79,33 +86,75 @@ const dialogRef = inject('dialogRef')
 const form = ref({
   id: 0,
   nome: '',
-  email: '',
+  login: '',
   tipo: 'E',
 })
 
-const senhaTemporaria = ref('')
-const dialogSenhaTemporaria = ref(false)
+const senha = ref('')
+const dialogSenha = ref(false)
+const editando = ref(false)
 
 onMounted(() => {
   const dados = dialogRef.value.data
 
   if (dados.id_usuario) {
+    editando.value = true
     form.value.id = dados.id_usuario
     form.value.nome = dados.nome
-    form.value.email = dados.email
+    form.value.login = dados.login
     form.value.tipo = dados.tipo
   }
 })
 
-const salvarCadastro = () => {
-  console.log('Dados salvos:', form.value)
-
-  dialogRef.value.close()
+const clicouSalvar = () => {
+  if (editando.value) {
+    atualizarCadastro()
+  } else {
+    abrirAlterarSenha()
+  }
 }
 
-const gerarSenhaTemporaria = () => {
-  senhaTemporaria.value = '123456w'
-  dialogSenhaTemporaria.value = true
+const salvarCadastro = async () => {
+  const body = {
+    nome: form.value.nome,
+    login: form.value.login,
+    tipo: form.value.tipo,
+    senha: senha.value
+  }
+
+  try {
+    console.log(body)
+    await api.post('/api/usuario', body)
+  } catch (error) {
+    alert('Erro na requisição')
+  } finally {
+    dialogRef.value.close()
+  }
+}
+
+const alterarSenha = async () => {
+  dialogSenha.value = false
+
+  if (editando.value) {
+    await api.put(`/api/senha_usuario/${form.value.id}`, {senha: senha.value})
+  } else {
+    salvarCadastro()
+  }
+}
+
+const atualizarCadastro = async () => {
+  try {
+    await api.put(`/api/usuario/${form.value.id}`, form.value)
+  } catch (error) {
+    alert('Erro na requisição')
+  } finally {
+    dialogRef.value.close()
+  }
+}
+
+const abrirAlterarSenha = () => {
+  senha.value = ''
+  dialogSenha.value = true
 }
 
 const fecharModal = () => {
