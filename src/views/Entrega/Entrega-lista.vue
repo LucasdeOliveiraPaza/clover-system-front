@@ -136,7 +136,7 @@ const limparFiltros = () => {
 const abrirCadastroEntrega = (entrega = []) => {
   dialog.open(EntregaCadastro, {
     props: {
-      header: 'Cadastro de Usuário',
+      header: 'Cadastro de Entrega',
       style: {
         width: '50vw',
       },
