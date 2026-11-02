@@ -119,22 +119,13 @@
 
 <script setup>
 import { onMounted, ref, inject } from 'vue'
+import api from '@/globals/api'
 import Panel from 'primevue/panel'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import InputMask from 'primevue/inputmask'
-
-onMounted(() => {
-  const dados = dialogRef.value.data
-
-  if (dados.id_entrega) {
-    form.value.id = dados.id_entrega
-    form.value.idVenda = dados.id_venda
-    form.value.entregador = dados.entregador.value
-  }
-})
 
 const dialogRef = inject('dialogRef')
 
@@ -152,19 +143,54 @@ const form = ref({
   complemento: '',
 })
 
-const Entregadores = ref([
-  { label: 'fulano', codigo: 2 },
-  { label: 'deltrano', codigo: 3 },
-])
+const Entregadores = ref([])
+
+onMounted(async () => {
+  await carregarEntregadores()
+
+  const dados = dialogRef.value.data
+
+  if (dados.id_entrega) {
+    form.value = {
+      id: dados.id_entrega,
+      idVenda: dados.id_venda,
+      entregador: dados.entregador?.value ?? null,
+      descricao: dados.descricao ?? '',
+      nomeComprador: dados.destinatario,
+      contato: dados.contato,
+      cep: dados.cep,
+      bairro: dados.bairro,
+      rua: dados.rua,
+      numero: dados.numero,
+      complemento: dados.complemento ?? '',
+    }
+  }
+})
+
+const carregarEntregadores = async () => {
+  try {
+    Entregadores.value = await api.get('/api/entregador')
+  } catch (error) {
+    alert('Erro ao carregar os entregadores')
+  }
+}
 
 const buscarCep = () => {
   console.log(form.value.cep)
 }
 
-const salvarCadastro = () => {
-  console.log('Dados salvos:', form.value)
+const salvarCadastro = async () => {
+  try {
+    if (form.value.id) {
+      await api.put(`/api/entrega/${form.value.id}`, form.value)
+    } else {
+      await api.post('/api/entrega', form.value)
+    }
 
-  dialogRef.value.close()
+    dialogRef.value.close()
+  } catch (error) {
+    alert('Não foi possível salvar a entrega. Confira se todos os campos obrigatórios foram preenchidos.')
+  }
 }
 
 const fecharModal = () => {
