@@ -28,7 +28,7 @@ const routes = [
     meta: { autenticar: true },
   },
   {
-    path: '/rota-entrega',
+    path: '/rota-entrega/:id',
     component: RotaEntrega,
     meta: { autenticar: true },
   },

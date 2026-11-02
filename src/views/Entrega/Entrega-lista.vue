@@ -89,7 +89,7 @@
               raised
               severity="warning"
               v-tooltip.top="'Iniciar Entrega'"
-              @click="nav.navegarPara('/rota-entrega')"
+              @click="nav.navegarPara('/rota-entrega/' + entrega.data.id_entrega)"
             />
           </div>
         </template>

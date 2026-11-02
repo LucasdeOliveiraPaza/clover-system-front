@@ -123,7 +123,6 @@ const salvarCadastro = async () => {
   }
 
   try {
-    console.log(body)
     await api.post('/api/usuario', body)
   } catch (error) {
     alert('Erro na requisição')

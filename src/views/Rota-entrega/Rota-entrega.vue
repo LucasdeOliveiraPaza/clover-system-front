@@ -7,6 +7,10 @@
     />
   </div>
 
+  <div v-if="coordenadas.length > 0">
+    <Mapa :destination=coordenadas />
+  </div>
+
   <Dialog
     modal
     v-model:visible="dialogFinalizarEntrega"
@@ -60,20 +64,51 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onUnmounted } from 'vue'
+import { ref, watch, nextTick, onUnmounted, onMounted } from 'vue'
 import SignaturePad from 'signature_pad'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import FileUpload from 'primevue/fileupload'
 import { navegar } from '@/globals/globals.ts'
+import Mapa from '@/views/Rota-entrega/Mapa.vue'
+import api from '@/globals/api'
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const nav = navegar()
 const dialogFinalizarEntrega = ref(false)
+
+const idEntrega = ref(0)
 
 const canvasRef = ref(null)
 let signaturePad = null
 
 const fotoBase64 = ref(null)
+
+const coordenadas = ref([])
+
+onMounted(() => {
+  gerarCoordenadas(route.params.id)
+})
+
+const gerarCoordenadas = async (id) => {
+  try {
+    idEntrega.value = id
+    const endereco = await api.get(`/api/destino_entrega/${idEntrega.value}`)
+    const jsonEndereco = encodeURIComponent(endereco)
+    
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${jsonEndereco}&limit=1`, {
+      headers: { "User-Agent": "Clover" }
+    });
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      coordenadas.value = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+    }
+  } catch {
+    alert('Erro na requisição')
+  }
+}
 
 onUnmounted(() => {
   window.removeEventListener('resize', ajustarTamanhoCanvas)
@@ -110,9 +145,7 @@ const destruirSignaturePad = () => {
 
 const ajustarTamanhoCanvas = () => {
   const canvas = canvasRef.value
-  if (!canvas) return
-
-  const ratio = Math.max(window.devicePixelRatio || 1, 1)
+  const ratio = Math.max(window.devicePixelRatio, 1)
   canvas.width = canvas.offsetWidth * ratio
   canvas.height = canvas.offsetHeight * ratio
   canvas.getContext('2d').scale(ratio, ratio)
@@ -140,7 +173,7 @@ const fecharDialog = () => {
   nav.navegarPara('/entrega-lista')
 }
 
-const salvarDados = () => {
+const salvarDados = async () => {
   if (signaturePad.isEmpty()) {
     alert('Por favor, faça a sua assinatura.')
     return
@@ -154,6 +187,7 @@ const salvarDados = () => {
   }
 
   console.log(body)
+  await api.post(`/api/finalizar_entrega/${idEntrega.value}`, body)
 
   fecharDialog()
 }
@@ -162,8 +196,8 @@ const salvarDados = () => {
 <style scoped>
 .botao-finalizar {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  right: 20px;
   z-index: 9999;
 }
 
